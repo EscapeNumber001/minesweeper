@@ -17,52 +17,48 @@
  */
 #include <iostream>
 #include <vector>
+#include "game.hpp"
 
 struct Point;
 class Board;
 class Tile;
 
-struct Point
+Point::Point(int x, int y)
 {
-public:
-  int x;
-  int y;
-public:
-  Point(int x, int y)
-  {
-    this->x = x;
-    this->y = y;
-  }
+  this->x = x;
+  this->y = y;
+}
 
-  Point(void) {Point(0, 0);};
-};
-
-class Board
+Point::Point()
 {
-public:
-  std::vector<Tile*> tiles;
-};
+  Point(0, 0);
+}
 
-class Tile
+void Board::PrintBoard()
 {
-public:
-  bool isMine;
-  bool isRevealed;
-public:
-  Tile(int x, int y, Board* board)
+  for (Tile* t : tiles)
   {
-    isMine = false;
-    isRevealed = false;
-    position = (Point){x, y};
-    this->board = board;
+    std::cout << "\033[" << t->GetPosition().y + 1 << ";" << t->GetPosition().x + 1 << "H" << "#";
   }
+  std::cout << std::endl;
+}
 
-  Point GetPosition()
-  {
-    return (Point){position.x, position.y};
-  }
+Tile::Tile(int x, int y, Board* board)
+{
+  isMine = false;
+  isRevealed = false;
+  position = (Point){x, y};
+  this->board = board;
+}
 
-  int CountAdjacentMines()
+Point Tile::GetPosition()
+{
+  return (Point){position.x, position.y};
+}
+
+
+// TODO: this needs re-indented
+int Tile::CountAdjacentMines()
   {
     int minesCounted = 0;
 
@@ -83,23 +79,19 @@ public:
 
     return minesCounted;
   }
-private:
-  Board* board;
-  Point position;
-};
 
 int main()
 {
   Board* b = new Board();
-  for (int y = 0; y < 50; y++)
+  for (int y = 0; y < 5; y++)
   {
-    for (int x = 0; x < 50; x++)
+    for (int x = 0; x < 5; x++)
     {
       Tile* t = new Tile(x, y, b);
       t->isMine = true;
       b->tiles.push_back(t);
     }
   }
-  std::cout << b->tiles[75]->CountAdjacentMines() << std::endl;
+  b->PrintBoard();
   return 0;
 }
