@@ -19,7 +19,6 @@
 // TODO: Replace TUI code with GTK or similar GUI interface
 
 
-#include <iostream>
 #include <vector>
 #include "game.hpp"
 #include <gtk/gtk.h>
@@ -27,8 +26,6 @@
 struct Point;
 class Board;
 class Tile;
-
-
 
 const char* tileDisplayChars[] = {
   "0",
@@ -140,25 +137,50 @@ static void revealTileGtk(GtkButton* btn, gpointer userdata)
   Tile* t = (Tile*)userdata;
   t->TryRevealTile();
   gtk_button_set_label(GTK_BUTTON(btn), t->GetDisplayCharacter());
-  //gtk_window_present(GTK_WINDOW(ctx->window));
 }
 
 
 static void on_activate(GtkApplication* app) {
-  window = gtk_application_window_new(app);
-  GtkWidget* grid = gtk_grid_new();
-  gtk_window_set_child(GTK_WINDOW(window), grid);
+  GtkBuilder* builder = gtk_builder_new();
+  GError *error = NULL;
+  gtk_builder_add_from_file(builder, "../interface.ui", &error);  // FIXME: This local filepath won't work once the program is moved to any other directory!
+  if (error) {
+     g_printerr("Error loading UI file: %s\n", error->message);
+     g_clear_error(&error);
+      return;
+  }
 
-  int i = 0;
+  window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+  gtk_window_set_application(GTK_WINDOW(window), app);
+  GtkWidget* grid = GTK_WIDGET(gtk_builder_get_object(builder, "buttonsGrid"));
   for (Tile* t : b->tiles)
   {
     Point pos = t->GetPosition();
     GtkWidget* button = gtk_button_new_with_label(t->GetDisplayCharacter());
+    gtk_widget_set_visible(button, true);
     g_signal_connect(button, "clicked", G_CALLBACK(revealTileGtk), t);
     gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
-    i++;
   }
   gtk_window_present(GTK_WINDOW(window));
+
+  //GtkWidget* grid = gtk_grid_new();
+  //gtk_window_set_child(GTK_WINDOW(window), grid);
+
+  /*for (Tile* t : b->tiles)
+  {
+    Point pos = t->GetPosition();
+    GtkWidget* button = gtk_button_new_with_label(t->GetDisplayCharacter());
+    g_signal_connect(button, "clicked", G_CALLBACK(revealTileGtk), t);
+
+    gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
+  }
+  GtkWidget* revealModeBtn = gtk_check_button_new_with_label("Reveal");
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(revealModeBtn), true);
+  GtkWidget* flagModeBtn   = gtk_check_button_new_with_label("Flag");
+  gtk_check_button_set_group(GTK_CHECK_BUTTON(revealModeBtn), GTK_CHECK_BUTTON(flagModeBtn));
+  gtk_grid_attach(GTK_GRID(grid), revealModeBtn, 0, 6, 500, 1);
+  gtk_grid_attach(GTK_GRID(grid), flagModeBtn, 2, 6, 2, 1);
+  gtk_window_present(GTK_WINDOW(window));*/
 }
 
 int main(int argc, char* argv[])
@@ -168,13 +190,12 @@ int main(int argc, char* argv[])
   {
     for (int x = 0; x < 5; x++)
     {
+      int randomNum = rand() % 4;
       Tile* t = new Tile(x, y, b);
-      t->isMine = true;
+      t->isMine = randomNum == 1;
       b->tiles.push_back(t);
     }
   }
-  b->tiles[0]->isMine = false;
-  b->tiles[0]->isRevealed = true;
 
   GtkApplication* app = gtk_application_new("com.EscapeNumber001.Minesweeper", \
       G_APPLICATION_DEFAULT_FLAGS);
