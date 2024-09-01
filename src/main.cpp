@@ -28,20 +28,7 @@ class Tile;
 
 Board* b = NULL;
 
-// TODO: Implement this system more elegantly
-const char* Tile::GetDisplayCharacter()
-{
-  if (isFlagged)
-    return tileDisplayChars[9];
 
-  if (!isRevealed)
-    return tileDisplayChars[10];
-
-  if (!isMine)
-    return tileDisplayChars[CountAdjacentMines()];
-  
-  return tileDisplayChars[11];
-}
 int main(int argc, char* argv[])
 {
   srand(time(NULL));

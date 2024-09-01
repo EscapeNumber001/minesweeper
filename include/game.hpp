@@ -47,7 +47,6 @@ public:
   Tile(int x, int y, Board* board);
   Point GetPosition();
   int CountAdjacentMines();
-  const char* GetDisplayCharacter();
 
   // Reveals the tile 
   void TryRevealTile();

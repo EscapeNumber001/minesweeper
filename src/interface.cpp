@@ -28,7 +28,7 @@ const char* tileDisplayChars[] = {
   "5",
   "6",
   "7",
-  "8",
+"8",
   "!",  // Flagged
   " ",  // Unrevealed tile
   "X"   // Revealed mine
@@ -39,6 +39,21 @@ std::vector<UITileButton*>* tileButtons;  // Initialized in on_activate().
 Board* board = nullptr;
 int mode = REVEAL_MODE;
 // ==========================
+
+// TODO: Implement this system more elegantly
+const char* GetDisplayCharacterForTile(Tile* t)
+{
+  if (t->isFlagged)
+    return tileDisplayChars[9];
+
+  if (!t->isRevealed)
+    return tileDisplayChars[10];
+
+  if (!t->isMine)
+    return tileDisplayChars[t->CountAdjacentMines()];
+  
+  return tileDisplayChars[11];
+}
 
 void interface_init(Board* gameBoard)
 {
@@ -55,7 +70,7 @@ void updateAllTileButtons(std::vector<UITileButton*>* buttons)
 {
   for (UITileButton* b : *buttons)
   {
-    gtk_button_set_label(GTK_BUTTON(b->button), b->associatedTile->GetDisplayCharacter());
+    gtk_button_set_label(GTK_BUTTON(b->button), GetDisplayCharacterForTile(b->associatedTile));
     if (b->associatedTile->isRevealed)
     {
       gtk_widget_set_sensitive(GTK_WIDGET(b->button), false);
@@ -98,7 +113,7 @@ static void tileClicked(GtkButton* btn, gpointer userdata)
       return;
 
     t->isFlagged = !t->isFlagged;
-    gtk_button_set_label(GTK_BUTTON(btn), t->GetDisplayCharacter());
+    gtk_button_set_label(GTK_BUTTON(btn), GetDisplayCharacterForTile(t));
   }
 }
 
@@ -131,7 +146,7 @@ static void on_activate(GtkApplication* app) {
   for (Tile* t : board->tiles)
   {
     Point pos = t->GetPosition();
-    GtkWidget* button = gtk_button_new_with_label(t->GetDisplayCharacter());
+    GtkWidget* button = gtk_button_new_with_label(GetDisplayCharacterForTile(t));
     gtk_widget_set_visible(button, true);
     g_signal_connect(button, "clicked", G_CALLBACK(tileClicked), t);
     gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
