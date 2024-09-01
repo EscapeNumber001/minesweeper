@@ -20,6 +20,7 @@
 #define _GAME_HPP_
 
 #include <vector>
+#include <gtk/gtk.h>
 
 class Board;
 struct Point;
@@ -40,6 +41,7 @@ class Tile
 public:
   bool isMine;
   bool isRevealed;
+  bool isFlagged;
   int surroundingMineCount;
 public:
   Tile(int x, int y, Board* board);
@@ -49,9 +51,19 @@ public:
 
   // Reveals the tile 
   void TryRevealTile();
+  void RevealAdjacentZeroTiles();
 private:
   Board* board;
   Point position;
+};
+
+struct UITileButton
+{
+public:
+  GtkWidget* button;
+  Tile* associatedTile;
+public:
+  UITileButton(GtkWidget* button, Tile* tile);
 };
 
 class Board
