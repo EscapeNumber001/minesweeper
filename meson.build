@@ -1,6 +1,6 @@
 project('minesweeper', 'cpp')
 
-sources = ['src/main.cpp']
+sources = ['src/main.cpp', 'src/game.cpp', 'src/interface.cpp']
 include_dir = include_directories('include')
 gtk_dep = dependency('gtk+-3.0')
 

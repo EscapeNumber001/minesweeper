@@ -57,14 +57,6 @@ private:
   Point position;
 };
 
-struct UITileButton
-{
-public:
-  GtkWidget* button;
-  Tile* associatedTile;
-public:
-  UITileButton(GtkWidget* button, Tile* tile);
-};
 
 class Board
 {
