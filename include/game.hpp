@@ -40,10 +40,15 @@ class Tile
 public:
   bool isMine;
   bool isRevealed;
+  int surroundingMineCount;
 public:
-  Tile(int, int, Board*);
+  Tile(int x, int y, Board* board);
   Point GetPosition();
   int CountAdjacentMines();
+  const char* GetDisplayCharacter();
+
+  // Reveals the tile 
+  void TryRevealTile();
 private:
   Board* board;
   Point position;
@@ -54,6 +59,7 @@ class Board
 public:
   std::vector<Tile*> tiles;
 public:
+  Tile* GetTileAtPoint(Point p);
   void PrintBoard();
 };
 
