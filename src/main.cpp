@@ -27,6 +27,9 @@ struct Point;
 class Board;
 class Tile;
 
+#define REVEAL_MODE 0
+#define FLAG_MODE 1
+
 const char* tileDisplayChars[] = {
   "0",
   "1",
@@ -130,15 +133,42 @@ int Tile::CountAdjacentMines()
 
 Board* b = NULL;
 GtkWidget* window;
+bool mode = REVEAL_MODE;
 
+void setModeToReveal(GtkButton* button, gpointer user_data)
+{
+  g_print("Something happened\n");
+  mode = REVEAL_MODE;
+}
+
+void setModeToFlag(GtkButton* button, gpointer user_data)
+{
+  g_print("Something happened\n");
+  mode = FLAG_MODE;
+}
 
 static void revealTileGtk(GtkButton* btn, gpointer userdata)
 {
+  if (mode != REVEAL_MODE)
+    return;
+
   Tile* t = (Tile*)userdata;
   t->TryRevealTile();
   gtk_button_set_label(GTK_BUTTON(btn), t->GetDisplayCharacter());
 }
 
+
+static void tileClicked(GtkButton* btn, gpointer userdata)
+{
+  if (mode == REVEAL_MODE)
+  {
+    revealTileGtk(btn, userdata);
+  }
+  else if (mode == FLAG_MODE)
+  {
+    // TODO
+  }
+}
 
 static void on_activate(GtkApplication* app) {
   GtkBuilder* builder = gtk_builder_new();
@@ -153,12 +183,14 @@ static void on_activate(GtkApplication* app) {
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
   gtk_window_set_application(GTK_WINDOW(window), app);
   GtkWidget* grid = GTK_WIDGET(gtk_builder_get_object(builder, "buttonsGrid"));
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "flagModeButton")), "clicked", G_CALLBACK(setModeToFlag), NULL);  // TODO: Connect these from Glade directly because it's a bit hacky doing it this way
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "revealModeButton")), "clicked", G_CALLBACK(setModeToReveal), NULL);
   for (Tile* t : b->tiles)
   {
     Point pos = t->GetPosition();
     GtkWidget* button = gtk_button_new_with_label(t->GetDisplayCharacter());
     gtk_widget_set_visible(button, true);
-    g_signal_connect(button, "clicked", G_CALLBACK(revealTileGtk), t);
+    g_signal_connect(button, "clicked", G_CALLBACK(tileClicked), t);
     gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
   }
   gtk_window_present(GTK_WINDOW(window));
