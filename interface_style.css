@@ -1,0 +1,8 @@
+.empty_tile {
+  border-style: inset;
+  border-width: 2px;
+  border-color: rgba(130, 130, 130, 255);
+  background-blend-mode: multiply;
+  color: white;
+  background-color: rgba(100,100,100,255);
+}

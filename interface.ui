@@ -2,9 +2,9 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <!-- interface-css-provider-path interface_style.css -->
   <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Minesweeper</property>
     <property name="default-width">640</property>
     <property name="default-height">480</property>
     <child>
