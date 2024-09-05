@@ -28,16 +28,19 @@ const char* tileDisplayChars[] = {
   "5",
   "6",
   "7",
-"8",
+  "8",
   "!",  // Flagged
   " ",  // Unrevealed tile
   "X"   // Revealed mine
 };
 
+GtkBuilder* builder;
 GtkWidget* window;  // Initialized in on_activate().
 std::vector<UITileButton*>* tileButtons;  // Initialized in on_activate().
 Board* board = nullptr;
 int mode = REVEAL_MODE;
+
+GtkWidget* grid;
 // ==========================
 
 // TODO: Implement this system more elegantly
@@ -117,8 +120,47 @@ static void tileClicked(GtkButton* btn, gpointer userdata)
   }
 }
 
+static void create_buttons()
+{
+  for (Tile* t : board->tiles)
+  {
+    Point pos = t->GetPosition();
+    GtkWidget* button = gtk_button_new_with_label(GetDisplayCharacterForTile(t));
+    gtk_widget_set_visible(button, true);
+    g_signal_connect(button, "clicked", G_CALLBACK(tileClicked), t);
+    gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
+
+    UITileButton* newButton = new UITileButton(button, t);
+    tileButtons->push_back(newButton);
+  }
+}
+
+static void clear_buttons()
+{
+  for (UITileButton* b : *tileButtons)
+  {
+    gtk_widget_destroy(b->button);
+    free(b);
+  }
+  tileButtons->clear();
+}
+
+static void on_new_game_clicked(GtkButton* button, gpointer* userdata)
+{
+  g_print("thing");
+  GtkPopoverMenu* popover = GTK_POPOVER_MENU(gtk_builder_get_object(builder, "newGamePopover"));
+  gtk_popover_popup(GTK_POPOVER(popover));
+}
+
+static void new_game_confirm_button_clicked(GtkButton* button, gpointer* userdata)
+{
+  // TODO: Reset actual game state
+  clear_buttons();
+  create_buttons();
+}
+
 static void on_activate(GtkApplication* app) {
-  GtkBuilder* builder = gtk_builder_new();
+  builder = gtk_builder_new();
   GError *error = NULL;
   gtk_builder_add_from_file(builder, "../interface.ui", &error);  // FIXME: This local filepath won't work once the program is moved to any other directory!
   if (error) {
@@ -138,22 +180,15 @@ static void on_activate(GtkApplication* app) {
 
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
   gtk_window_set_application(GTK_WINDOW(window), app);
-  GtkWidget* grid = GTK_WIDGET(gtk_builder_get_object(builder, "buttonsGrid"));
+  grid = GTK_WIDGET(gtk_builder_get_object(builder, "buttonsGrid"));
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "flagModeButton")), "clicked", G_CALLBACK(setModeToFlag), NULL);  // TODO: Connect these from Glade directly because it's a bit hacky doing it this way
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "revealModeButton")), "clicked", G_CALLBACK(setModeToReveal), NULL);
 
-  tileButtons = new std::vector<UITileButton*>;
-  for (Tile* t : board->tiles)
-  {
-    Point pos = t->GetPosition();
-    GtkWidget* button = gtk_button_new_with_label(GetDisplayCharacterForTile(t));
-    gtk_widget_set_visible(button, true);
-    g_signal_connect(button, "clicked", G_CALLBACK(tileClicked), t);
-    gtk_grid_attach(GTK_GRID(grid), button, pos.x, pos.y, 1, 1);
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "newGameButton")), "clicked", G_CALLBACK(on_new_game_clicked), NULL);
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "confirmNewGameSettingsButton")), "clicked", G_CALLBACK(new_game_confirm_button_clicked), NULL);
 
-    UITileButton* newButton = new UITileButton(button, t);
-    tileButtons->push_back(newButton);
-  }
+  tileButtons = new std::vector<UITileButton*>;
+  create_buttons();
   gtk_window_present(GTK_WINDOW(window));
 }
 

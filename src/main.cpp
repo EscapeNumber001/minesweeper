@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
   int board_size_x = 10;
   int board_size_y = 10;
-  int num_mines = 4;
+  int num_mines = 8;
 
   // Create tiles
   for (int y = 0; y < board_size_y; y++)
