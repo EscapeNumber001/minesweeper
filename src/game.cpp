@@ -40,6 +40,35 @@ Tile* Board::GetTileAtPoint(Point p)
   return nullptr;
 }
 
+void Board::Init(int sizeX, int sizeY, int mineCount)
+{
+  // Create tiles
+  for (int y = 0; y < sizeY; y++)
+  {
+    for (int x = 0; x < sizeX; x++)
+    {
+      Tile* t = new Tile(x, y, this);
+      tiles.push_back(t);
+    }
+  }
+
+  int square_size = sizeX * sizeY;
+  for (int i = 0; i < mineCount; i++)
+  {
+    int index = rand() % square_size;
+    tiles[index]->isMine = true;
+  }
+}
+
+void Board::DestroyAllTiles()
+{
+  for (Tile* t : tiles)
+  {
+    delete t;
+  }
+  tiles.clear();
+}
+
 void Tile::TryRevealTile()
 {
   if (isRevealed)

@@ -38,22 +38,5 @@ int main(int argc, char* argv[])
   int board_size_x = 10;
   int board_size_y = 10;
   int num_mines = 8;
-
-  // Create tiles
-  for (int y = 0; y < board_size_y; y++)
-  {
-    for (int x = 0; x < board_size_x; x++)
-    {
-      Tile* t = new Tile(x, y, b);
-      b->tiles.push_back(t);
-    }
-  }
-
-  int square_size = board_size_x * board_size_y;
-  for (int i = 0; i < num_mines; i++)
-  {
-    int index = rand() % square_size;
-    b->tiles[index]->isMine = true;
-  }
   return interface_run_game(argc, argv);
 }

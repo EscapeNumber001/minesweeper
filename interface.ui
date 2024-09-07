@@ -238,7 +238,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="boardSizeInput">
+              <object class="GtkSpinButton" id="boardSizeXInput">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="max-length">2</property>

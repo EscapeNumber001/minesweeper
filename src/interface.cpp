@@ -140,7 +140,7 @@ static void clear_buttons()
   for (UITileButton* b : *tileButtons)
   {
     gtk_widget_destroy(b->button);
-    free(b);
+    delete b;
   }
   tileButtons->clear();
 }
@@ -154,8 +154,17 @@ static void on_new_game_clicked(GtkButton* button, gpointer* userdata)
 
 static void new_game_confirm_button_clicked(GtkButton* button, gpointer* userdata)
 {
-  // TODO: Reset actual game state
   clear_buttons();
+  GtkWidget* xSizeInp = GTK_WIDGET(gtk_builder_get_object(builder, "boardSizeXInput"));
+  GtkWidget* ySizeInp = GTK_WIDGET(gtk_builder_get_object(builder, "boardSizeYInput"));
+  GtkWidget* minesInp = GTK_WIDGET(gtk_builder_get_object(builder, "mineCountInput"));
+  int sizeX = gtk_spin_button_get_value(GTK_SPIN_BUTTON(xSizeInp));
+  int sizeY = gtk_spin_button_get_value(GTK_SPIN_BUTTON(ySizeInp));
+  int mineCount = gtk_spin_button_get_value(GTK_SPIN_BUTTON(minesInp));
+
+  clear_buttons();
+  board->DestroyAllTiles();
+  board->Init(sizeX, sizeY, mineCount);
   create_buttons();
 }
 

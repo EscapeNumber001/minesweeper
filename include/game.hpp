@@ -62,6 +62,8 @@ class Board
 public:
   std::vector<Tile*> tiles;
 public:
+  void Init(int boardSizeX, int boardSizeY, int mines);
+  void DestroyAllTiles();
   Tile* GetTileAtPoint(Point p);
   void PrintBoard();
 };
