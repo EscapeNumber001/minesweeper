@@ -103,6 +103,16 @@ static void revealTileGtk(GtkButton* btn, gpointer userdata)
 }
 
 
+static void checkForWin()
+{
+  if (board->minesFlagged == board->mineCount)
+  {
+    GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youWinWindow"));
+    gtk_widget_set_visible(GTK_WIDGET(dialog), true);
+  }
+}
+
+
 static void tileClicked(GtkButton* btn, gpointer userdata)
 {
   if (mode == REVEAL_MODE)
@@ -115,8 +125,9 @@ static void tileClicked(GtkButton* btn, gpointer userdata)
     if (t->isRevealed)
       return;
 
-    t->isFlagged = !t->isFlagged;
-    gtk_button_set_label(GTK_BUTTON(btn), GetDisplayCharacterForTile(t));
+    t->ToggleFlag();
+    updateAllTileButtons(tileButtons);
+    checkForWin();
   }
 }
 

@@ -3,43 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <!-- interface-css-provider-path interface_style.css -->
-  <object class="GtkAboutDialog" id="aboutWindow">
-    <property name="can-focus">False</property>
-    <property name="type-hint">dialog</property>
-    <property name="program-name">Minesweeper</property>
-    <property name="version">1.0.0</property>
-    <property name="comments" translatable="yes">A simple Minesweeper clone written in C++ using GTK.</property>
-    <property name="authors">EscapeNumber001
-https://github.com/EscapeNumber001</property>
-    <property name="logo-icon-name">image-missing</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkAdjustment" id="boardSizeXStep">
     <property name="lower">5</property>
     <property name="upper">500</property>
@@ -380,6 +343,59 @@ https://github.com/EscapeNumber001</property>
         <property name="submenu">main</property>
         <property name="position">1</property>
       </packing>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="youWinWindow">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="attached-to">window</property>
+    <property name="text" translatable="yes">You win</property>
+    <property name="secondary-text" translatable="yes">Successfully flagged all mines</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-top">11</property>
+            <property name="homogeneous">True</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="replayButton">
+                <property name="label" translatable="yes">Replay with same settings</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="dismissWinWindowButton">
+                <property name="label" translatable="yes">Dismiss</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
     </child>
   </object>
 </interface>

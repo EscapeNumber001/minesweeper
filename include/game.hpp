@@ -50,6 +50,7 @@ public:
 
   // Reveals the tile 
   void TryRevealTile(bool isBeingCalledRecursively);
+  void ToggleFlag();
   void RevealAdjacentZeroTiles();
 private:
   Board* board;
@@ -62,11 +63,14 @@ class Board
 public:
   std::vector<Tile*> tiles;
   int turnCount;
+  int mineCount;
+  int minesFlagged;
 public:
   void Init(int boardSizeX, int boardSizeY, int mines);
   void DestroyAllTiles();
   Tile* GetTileAtPoint(Point p);
   void PrintBoard();
+private:
 };
 
 #endif

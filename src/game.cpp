@@ -60,6 +60,8 @@ void Board::Init(int sizeX, int sizeY, int mineCount)
   }
 
   turnCount = 0;
+  this->mineCount = mineCount;
+  minesFlagged = 0;
 }
 
 void Board::DestroyAllTiles()
@@ -69,6 +71,8 @@ void Board::DestroyAllTiles()
     delete t;
   }
   tiles.clear();
+  mineCount = 0;
+  minesFlagged = 0;
 }
 
 void Tile::TryRevealTile(bool isBeingCalledRecursively)
@@ -85,6 +89,16 @@ void Tile::TryRevealTile(bool isBeingCalledRecursively)
 
   if (surroundingMineCount == 0)
     RevealAdjacentZeroTiles();
+}
+
+void Tile::ToggleFlag()
+{
+  isFlagged = !isFlagged;
+  if (isMine)
+    if (isFlagged)
+      board->minesFlagged++;
+    else
+      board->minesFlagged--;
 }
 
 void Tile::RevealAdjacentZeroTiles()
