@@ -49,7 +49,7 @@ public:
   int CountAdjacentMines();
 
   // Reveals the tile 
-  void TryRevealTile();
+  void TryRevealTile(bool isBeingCalledRecursively);
   void RevealAdjacentZeroTiles();
 private:
   Board* board;
@@ -61,6 +61,7 @@ class Board
 {
 public:
   std::vector<Tile*> tiles;
+  int turnCount;
 public:
   void Init(int boardSizeX, int boardSizeY, int mines);
   void DestroyAllTiles();

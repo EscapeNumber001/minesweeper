@@ -98,7 +98,7 @@ static void revealTileGtk(GtkButton* btn, gpointer userdata)
     return;
 
   Tile* t = (Tile*)userdata;
-  t->TryRevealTile();
+  t->TryRevealTile(false);
   updateAllTileButtons(tileButtons);
 }
 
@@ -147,9 +147,25 @@ static void clear_buttons()
 
 static void on_new_game_clicked(GtkButton* button, gpointer* userdata)
 {
-  g_print("thing");
   GtkPopoverMenu* popover = GTK_POPOVER_MENU(gtk_builder_get_object(builder, "newGamePopover"));
   gtk_popover_popup(GTK_POPOVER(popover));
+}
+
+static void on_about_button_clicked(GtkButton* button, gpointer* userdata)
+{
+  const char* authors[] = {
+    "EscapeNumber001\nhttps://github.com/EscapeNumber001",
+    NULL
+  };
+
+  // TODO: Logo on about screen
+
+  gtk_show_about_dialog(NULL, "program-name", "Minesweeper",
+	"title", "Minesweeper",
+	"comments", "A basic minesweeper clone written in C++.",
+	"authors", authors,
+	NULL
+      );
 }
 
 static void new_game_confirm_button_clicked(GtkButton* button, gpointer* userdata)
@@ -195,9 +211,9 @@ static void on_activate(GtkApplication* app) {
 
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "newGameButton")), "clicked", G_CALLBACK(on_new_game_clicked), NULL);
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "confirmNewGameSettingsButton")), "clicked", G_CALLBACK(new_game_confirm_button_clicked), NULL);
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "aboutButton")), "clicked", G_CALLBACK(on_about_button_clicked), NULL);
 
   tileButtons = new std::vector<UITileButton*>;
-  create_buttons();
   gtk_window_present(GTK_WINDOW(window));
 }
 

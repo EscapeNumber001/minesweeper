@@ -58,6 +58,8 @@ void Board::Init(int sizeX, int sizeY, int mineCount)
     int index = rand() % square_size;
     tiles[index]->isMine = true;
   }
+
+  turnCount = 0;
 }
 
 void Board::DestroyAllTiles()
@@ -69,7 +71,7 @@ void Board::DestroyAllTiles()
   tiles.clear();
 }
 
-void Tile::TryRevealTile()
+void Tile::TryRevealTile(bool isBeingCalledRecursively)
 {
   if (isRevealed)
     return;
@@ -78,6 +80,9 @@ void Tile::TryRevealTile()
     surroundingMineCount = CountAdjacentMines();
 
   isRevealed = true;
+  if (!isBeingCalledRecursively)  // Prevents the turn count from incrementing with every automatic reveal
+    board->turnCount++;
+
   if (surroundingMineCount == 0)
     RevealAdjacentZeroTiles();
 }
@@ -96,7 +101,7 @@ void Tile::RevealAdjacentZeroTiles()
     if (t == nullptr || t->isMine || t->isRevealed)
       continue;
 
-    t->TryRevealTile();
+    t->TryRevealTile(true);
   }
 }
 
