@@ -40,6 +40,10 @@ std::vector<UITileButton*>* tileButtons;  // Initialized in on_activate().
 Board* board = nullptr;
 int mode = REVEAL_MODE;
 
+// Whether tiles can be revealed or flagged.
+// This is set to true when receiving a game over or winning, and set to false when starting a new game.
+bool preventTileRevealing = false;
+
 GtkWidget* grid;
 // ==========================
 
@@ -111,6 +115,7 @@ static void restartButtonClicked(GtkButton* btn, gpointer messageDialog)
   board->Init(sizeX, sizeY, mineCount);
   clear_buttons();
   create_buttons();
+  preventTileRevealing = false;
 }
 
 static void gameOverGtk()
@@ -118,12 +123,13 @@ static void gameOverGtk()
   GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youLoseWindow"));
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "replayButtonLoseWindow")), "clicked", G_CALLBACK(restartButtonClicked), dialog);
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "dismissButtonLoseWindow")), "clicked", G_CALLBACK(dismissButtonClicked), dialog);
+  preventTileRevealing = true;
   gtk_widget_set_visible(GTK_WIDGET(dialog), true);
 }
 
 static void revealTileGtk(GtkButton* btn, gpointer userdata)
 {
-  if (mode != REVEAL_MODE)
+  if (mode != REVEAL_MODE || preventTileRevealing)
     return;
 
   Tile* t = (Tile*)userdata;
@@ -145,12 +151,16 @@ static void checkForWin()
     g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "replayButtonWinWindow")), "clicked", G_CALLBACK(restartButtonClicked), dialog);
     g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "dismissButtonWinWindow")), "clicked", G_CALLBACK(dismissButtonClicked), dialog);
     gtk_widget_set_visible(GTK_WIDGET(dialog), true);
+    preventTileRevealing = true;
   }
 }
 
 
 void tileClicked(GtkButton* btn, gpointer userdata)
 {
+  if (preventTileRevealing)
+    return;
+
   if (mode == REVEAL_MODE)
   {
     revealTileGtk(btn, userdata);
@@ -205,12 +215,26 @@ static void on_about_button_clicked(GtkButton* button, gpointer* userdata)
     NULL
   };
 
+  const char* artists[] = {
+    "Nicubunu @ Openclipart\nhttps://openclipart.org/detail/22065/broom",
+    NULL
+  };
+
   // TODO: Logo on about screen
+  // Load an image into a GdkPixbuf
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file("../assets/openclipart_broom.png", NULL);
+    if (!pixbuf) {
+        g_printerr("Failed to load image\n");
+	return;
+    }
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 128, 128, GDK_INTERP_BILINEAR); 
 
   gtk_show_about_dialog(NULL, "program-name", "Minesweeper",
 	"title", "Minesweeper",
 	"comments", "A basic minesweeper clone written in C++.",
 	"authors", authors,
+	"artists", artists,
+	"logo", pixbuf,
 	NULL
       );
 }
@@ -229,6 +253,7 @@ static void new_game_confirm_button_clicked(GtkButton* button, gpointer* userdat
   board->DestroyAllTiles();
   board->Init(sizeX, sizeY, mineCount);
   create_buttons();
+  preventTileRevealing = false;
 }
 
 static void on_activate(GtkApplication* app) {
