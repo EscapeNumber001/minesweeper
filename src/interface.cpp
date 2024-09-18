@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "interface.hpp"
 #include "global.hpp"
+#include <string>
 
 // === Global Variables ===
 const char* tileDisplayChars[] = {
@@ -44,6 +45,8 @@ int mode = REVEAL_MODE;
 // Whether tiles can be revealed or flagged.
 // This is set to true when receiving a game over or winning, and set to false when starting a new game.
 bool preventTileRevealing = false;
+
+std::string exeRootDir = "";
 
 GtkWidget* grid;
 // ==========================
@@ -222,7 +225,8 @@ static void on_about_button_clicked(GtkButton* button, gpointer* userdata)
   };
 
   // TODO: Logo on about screen
-    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file("../assets/openclipart_broom.png", NULL);
+  std::string path = exeRootDir + "/assets/openclipart_broom.png";
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(path.c_str(), NULL);
     if (!pixbuf) {
         g_printerr("Failed to load image\n");
 	return;
@@ -260,7 +264,8 @@ static void new_game_confirm_button_clicked(GtkButton* button, gpointer* userdat
 static void on_activate(GtkApplication* app) {
   builder = gtk_builder_new();
   GError *error = NULL;
-  gtk_builder_add_from_file(builder, "../interface.ui", &error);  // FIXME: This local filepath won't work once the program is moved to any other directory!
+  std::string interfaceFilepath = exeRootDir + "/assets/interface.ui";
+  gtk_builder_add_from_file(builder, interfaceFilepath.c_str(), &error);  // FIXME: This local filepath won't work once the program is moved to any other directory!
   if (error) {
      g_printerr("Error loading UI file: %s\n", error->message);
      g_clear_error(&error);
@@ -268,7 +273,8 @@ static void on_activate(GtkApplication* app) {
   }
 
   GtkCssProvider* css = gtk_css_provider_new();
-  gtk_css_provider_load_from_path(css, "../interface_style.css", &error);
+  std::string cssFilepath = exeRootDir + "/assets/interface_style.css";
+  gtk_css_provider_load_from_path(css, cssFilepath.c_str(), &error);
   if (error) {
      g_printerr("Error loading CSS file: %s\n", error->message);
      g_clear_error(&error);
@@ -294,6 +300,11 @@ int interface_run_game(int argc, char* argv[])
 {
   GtkApplication* app = gtk_application_new("com.EscapeNumber001.Minesweeper", \
       G_APPLICATION_DEFAULT_FLAGS);
+
+  std::string s = argv[0];
+  std::string delimiter = "/";
+  exeRootDir = s.substr(0, s.find_last_of(delimiter));
+
   g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
   return g_application_run(G_APPLICATION(app), argc, argv);
 }
