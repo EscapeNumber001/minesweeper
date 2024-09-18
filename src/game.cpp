@@ -52,26 +52,14 @@ void Board::Init(int sizeX, int sizeY, int mineCount)
     }
   }
 
-  int square_size = sizeX * sizeY;
-  for (int i = 0; i < mineCount; i++)
-  {
-    int index = rand() % square_size;
-
-    // Prevent the same tile from being changed to a mine more than once
-    if (tiles[index]->isMine)
-    {
-      i--;
-      continue;
-    }
-
-    tiles[index]->isMine = true;
-  }
 
   this->sizeX = sizeX;
   this->sizeY = sizeY;
   turnCount = 0;
   this->mineCount = mineCount;
   minesFlagged = 0;
+
+  ShuffleMineLocations();
 }
 
 void Board::DestroyAllTiles()
@@ -85,6 +73,9 @@ void Board::DestroyAllTiles()
   minesFlagged = 0;
 }
 
+// Turns all mines into regular tiles, then sets `mineCount` tiles as mines.
+// This method does not destroy or create tiles.
+// NOTE: sizeX, sizeY, and mineCount must be valid prior to calling this method.
 void Board::ShuffleMineLocations()
 {
   int square_size = sizeX * sizeY;
