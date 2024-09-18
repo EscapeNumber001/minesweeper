@@ -350,7 +350,7 @@
     <property name="type-hint">dialog</property>
     <property name="attached-to">window</property>
     <property name="text" translatable="yes">You win</property>
-    <property name="secondary-text" translatable="yes">Successfully flagged all mines</property>
+    <property name="secondary-text" translatable="yes">Successfully flagged all mines!</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -363,7 +363,7 @@
             <property name="homogeneous">True</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="replayButton">
+              <object class="GtkButton" id="replayButtonWinWindow">
                 <property name="label" translatable="yes">Replay with same settings</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -394,6 +394,61 @@
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="youLoseWindow">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="attached-to">window</property>
+    <property name="text" translatable="yes">You lose</property>
+    <property name="secondary-text" translatable="yes">You clicked a mine.</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-top">11</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="replayButtonLoseWindow">
+                <property name="label" translatable="yes">Replay with same settings</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="dismissLoseWindowButton">
+                <property name="label" translatable="yes">Dismiss</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>

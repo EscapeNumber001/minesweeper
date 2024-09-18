@@ -92,6 +92,12 @@ void setModeToFlag(GtkButton* button, gpointer user_data)
   mode = FLAG_MODE;
 }
 
+static void gameOverGtk()
+{
+  GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youLoseWindow"));
+  gtk_widget_set_visible(GTK_WIDGET(dialog), true);
+}
+
 static void revealTileGtk(GtkButton* btn, gpointer userdata)
 {
   if (mode != REVEAL_MODE)
@@ -100,6 +106,11 @@ static void revealTileGtk(GtkButton* btn, gpointer userdata)
   Tile* t = (Tile*)userdata;
   t->TryRevealTile(false);
   updateAllTileButtons(tileButtons);
+
+  if (t->isMine)
+  {
+    gameOverGtk();
+  }
 }
 
 
