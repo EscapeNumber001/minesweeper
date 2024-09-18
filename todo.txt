@@ -1,2 +1,0 @@
-[x] Automatically regenerate the board if the player's first click is a mine or only reveals one tile
-[ ] Implement game over screen when player clicks a mine
