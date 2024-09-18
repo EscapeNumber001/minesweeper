@@ -62,12 +62,15 @@ class Board
 {
 public:
   std::vector<Tile*> tiles;
+  int sizeX;
+  int sizeY;
   int turnCount;
   int mineCount;
   int minesFlagged;
 public:
   void Init(int boardSizeX, int boardSizeY, int mines);
   void DestroyAllTiles();
+  void ShuffleMineLocations();
   Tile* GetTileAtPoint(Point p);
   void PrintBoard();
 private:

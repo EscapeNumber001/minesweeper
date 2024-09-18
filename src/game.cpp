@@ -56,9 +56,19 @@ void Board::Init(int sizeX, int sizeY, int mineCount)
   for (int i = 0; i < mineCount; i++)
   {
     int index = rand() % square_size;
+
+    // Prevent the same tile from being changed to a mine more than once
+    if (tiles[index]->isMine)
+    {
+      i--;
+      continue;
+    }
+
     tiles[index]->isMine = true;
   }
 
+  this->sizeX = sizeX;
+  this->sizeY = sizeY;
   turnCount = 0;
   this->mineCount = mineCount;
   minesFlagged = 0;
@@ -75,17 +85,53 @@ void Board::DestroyAllTiles()
   minesFlagged = 0;
 }
 
+void Board::ShuffleMineLocations()
+{
+  int square_size = sizeX * sizeY;
+  for (Tile* t : tiles)
+  {
+    t->isMine = false;
+  }
+
+  for (int i = 0; i < mineCount; i++)
+  {
+    int index = rand() % square_size;
+    // Prevent the same tile from being changed to a mine more than once
+    //
+    // WARN: This will cause the game to get stuck in an infinite loop if
+    // mineCount >= square_size!
+    if (tiles[index]->isMine)
+    {
+      i--;
+      continue;
+    }
+    tiles[index]->isMine = true;
+  }
+}
+
 void Tile::TryRevealTile(bool isBeingCalledRecursively)
 {
   if (isRevealed)
     return;
 
-  if (!isMine)
-    surroundingMineCount = CountAdjacentMines();
-
-  isRevealed = true;
   if (!isBeingCalledRecursively)  // Prevents the turn count from incrementing with every automatic reveal
     board->turnCount++;
+
+  if (!isMine)
+  {
+    surroundingMineCount = CountAdjacentMines();
+  }
+  else if (board->turnCount == 1)
+  {
+    g_print("First click mine avoidance executing!\n");
+    while (isMine)
+    {
+      board->ShuffleMineLocations();
+    }
+    surroundingMineCount = CountAdjacentMines();
+  }
+
+  isRevealed = true;
 
   if (surroundingMineCount == 0)
     RevealAdjacentZeroTiles();
@@ -95,10 +141,12 @@ void Tile::ToggleFlag()
 {
   isFlagged = !isFlagged;
   if (isMine)
+  {
     if (isFlagged)
       board->minesFlagged++;
     else
       board->minesFlagged--;
+  }
 }
 
 void Tile::RevealAdjacentZeroTiles()
