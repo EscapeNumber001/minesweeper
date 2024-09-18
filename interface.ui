@@ -376,7 +376,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="dismissWinWindowButton">
+              <object class="GtkButton" id="dismissButtonWinWindow">
                 <property name="label" translatable="yes">Dismiss</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -428,7 +428,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="dismissLoseWindowButton">
+              <object class="GtkButton" id="dismissButtonLoseWindow">
                 <property name="label" translatable="yes">Dismiss</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>

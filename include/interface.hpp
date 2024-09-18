@@ -42,4 +42,9 @@ extern int mode;
 
 void interface_init(Board* board);
 int interface_run_game(int argc, char* argv[]);
+
+// Private functions
+void clear_buttons();
+void create_buttons();
+void tileClicked(GtkButton* btn, gpointer userdata);
 #endif

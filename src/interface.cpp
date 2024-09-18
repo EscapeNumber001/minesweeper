@@ -92,9 +92,32 @@ void setModeToFlag(GtkButton* button, gpointer user_data)
   mode = FLAG_MODE;
 }
 
+static void dismissButtonClicked(GtkButton* btn, gpointer messageDialog)
+{
+  gtk_widget_set_visible(GTK_WIDGET(messageDialog), false);
+}
+
+// Applicable to both win and lose screen buttons
+static void restartButtonClicked(GtkButton* btn, gpointer messageDialog)
+{ 
+  gtk_widget_set_visible(GTK_WIDGET(messageDialog), false);
+
+  // These values get clobbered by Board::Init() so we want to preserve them here
+  int sizeX = board->sizeX;
+  int sizeY = board->sizeY;
+  int mineCount = board->mineCount;
+
+  board->DestroyAllTiles();
+  board->Init(sizeX, sizeY, mineCount);
+  clear_buttons();
+  create_buttons();
+}
+
 static void gameOverGtk()
 {
   GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youLoseWindow"));
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "replayButtonLoseWindow")), "clicked", G_CALLBACK(restartButtonClicked), dialog);
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "dismissButtonLoseWindow")), "clicked", G_CALLBACK(dismissButtonClicked), dialog);
   gtk_widget_set_visible(GTK_WIDGET(dialog), true);
 }
 
@@ -119,12 +142,14 @@ static void checkForWin()
   if (board->minesFlagged == board->mineCount)
   {
     GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youWinWindow"));
+    g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "replayButtonWinWindow")), "clicked", G_CALLBACK(restartButtonClicked), dialog);
+    g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "dismissButtonWinWindow")), "clicked", G_CALLBACK(dismissButtonClicked), dialog);
     gtk_widget_set_visible(GTK_WIDGET(dialog), true);
   }
 }
 
 
-static void tileClicked(GtkButton* btn, gpointer userdata)
+void tileClicked(GtkButton* btn, gpointer userdata)
 {
   if (mode == REVEAL_MODE)
   {
@@ -142,7 +167,7 @@ static void tileClicked(GtkButton* btn, gpointer userdata)
   }
 }
 
-static void create_buttons()
+void create_buttons()
 {
   for (Tile* t : board->tiles)
   {
@@ -157,7 +182,7 @@ static void create_buttons()
   }
 }
 
-static void clear_buttons()
+void clear_buttons()
 {
   for (UITileButton* b : *tileButtons)
   {
