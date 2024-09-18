@@ -55,9 +55,10 @@ void Board::Init(int sizeX, int sizeY, int mineCount)
 
   this->sizeX = sizeX;
   this->sizeY = sizeY;
-  turnCount = 0;
+  this->turnCount = 0;
   this->mineCount = mineCount;
-  minesFlagged = 0;
+  this->innocentTilesFlagged = 0;
+  this->minesFlagged = 0;
 
   ShuffleMineLocations();
 }
@@ -137,6 +138,14 @@ void Tile::ToggleFlag()
       board->minesFlagged++;
     else
       board->minesFlagged--;
+  }
+
+  if (!isMine)
+  {
+    if (isFlagged)
+      board->innocentTilesFlagged++;
+    else
+      board->innocentTilesFlagged--;
   }
 }
 

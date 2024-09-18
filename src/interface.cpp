@@ -139,7 +139,7 @@ static void revealTileGtk(GtkButton* btn, gpointer userdata)
 
 static void checkForWin()
 {
-  if (board->minesFlagged == board->mineCount)
+  if (board->minesFlagged == board->mineCount && board->innocentTilesFlagged == 0)
   {
     GtkMessageDialog* dialog = GTK_MESSAGE_DIALOG(gtk_builder_get_object(builder, "youWinWindow"));
     g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "replayButtonWinWindow")), "clicked", G_CALLBACK(restartButtonClicked), dialog);

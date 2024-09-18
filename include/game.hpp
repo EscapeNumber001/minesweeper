@@ -67,6 +67,7 @@ public:
   int turnCount;
   int mineCount;
   int minesFlagged;
+  int innocentTilesFlagged;
 public:
   void Init(int boardSizeX, int boardSizeY, int mines);
   void DestroyAllTiles();
