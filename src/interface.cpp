@@ -17,6 +17,7 @@
  */
 #include <stdlib.h>
 #include "interface.hpp"
+#include "global.hpp"
 
 // === Global Variables ===
 const char* tileDisplayChars[] = {
@@ -221,7 +222,6 @@ static void on_about_button_clicked(GtkButton* button, gpointer* userdata)
   };
 
   // TODO: Logo on about screen
-  // Load an image into a GdkPixbuf
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file("../assets/openclipart_broom.png", NULL);
     if (!pixbuf) {
         g_printerr("Failed to load image\n");
@@ -231,10 +231,11 @@ static void on_about_button_clicked(GtkButton* button, gpointer* userdata)
 
   gtk_show_about_dialog(NULL, "program-name", "Minesweeper",
 	"title", "Minesweeper",
-	"comments", "A basic minesweeper clone written in C++.",
+	"comments", "A simple Minesweeper clone written in C++.",
 	"authors", authors,
 	"artists", artists,
 	"logo", pixbuf,
+	"version", VERSION,
 	NULL
       );
 }
