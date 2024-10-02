@@ -265,7 +265,7 @@ static void on_activate(GtkApplication* app) {
   builder = gtk_builder_new();
   GError *error = NULL;
   std::string interfaceFilepath = exeRootDir + "/assets/interface.ui";
-  gtk_builder_add_from_file(builder, interfaceFilepath.c_str(), &error);  // FIXME: This local filepath won't work once the program is moved to any other directory!
+  gtk_builder_add_from_file(builder, interfaceFilepath.c_str(), &error);
   if (error) {
      g_printerr("Error loading UI file: %s\n", error->message);
      g_clear_error(&error);
@@ -285,7 +285,7 @@ static void on_activate(GtkApplication* app) {
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
   gtk_window_set_application(GTK_WINDOW(window), app);
   grid = GTK_WIDGET(gtk_builder_get_object(builder, "buttonsGrid"));
-  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "flagModeButton")), "clicked", G_CALLBACK(setModeToFlag), NULL);  // TODO: Connect these from Glade directly because it's a bit hacky doing it this way
+  g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "flagModeButton")), "clicked", G_CALLBACK(setModeToFlag), NULL);
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "revealModeButton")), "clicked", G_CALLBACK(setModeToReveal), NULL);
 
   g_signal_connect(GTK_WIDGET(gtk_builder_get_object(builder, "newGameButton")), "clicked", G_CALLBACK(on_new_game_clicked), NULL);
